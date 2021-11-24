@@ -145,6 +145,7 @@ class PolicyGradient(object):
                 states.append(state)
                 action = self.policy.act(states[-1][None])[0]
                 state, reward, done, info = env.step(action)
+                # _ = env.render()
                 actions.append(action)
                 rewards.append(reward)
                 episode_reward += reward
@@ -195,9 +196,9 @@ class PolicyGradient(object):
             #######################################################
             #########   YOUR CODE HERE - 5-10 lines.   ############
 
-            returns = rewards[:]
-            for i in reversed(range(len(returns) - 1)):
-                returns[i] += self.config.gamma * returns[i + 1]
+            for i in reversed(range(len(rewards) - 1)):
+                rewards[i] += self.config.gamma * rewards[i + 1]
+            returns = rewards
             
             #######################################################
             #########          END YOUR CODE.          ############
@@ -278,9 +279,9 @@ class PolicyGradient(object):
         #########   YOUR CODE HERE - 5-7 lines.    ############
 
         logprob = self.policy.action_distribution(observations).log_prob(actions)
-        self.loss = -torch.mean(logprob * advantages)
+        loss = -torch.mean(logprob * advantages)
         self.optimizer.zero_grad()
-        self.loss.backward()
+        loss.backward()
         self.optimizer.step()
         
         #######################################################

@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.distributions as ptd
 
 from network_utils import np2torch, device
 
@@ -42,6 +41,7 @@ class BasePolicy:
         
         dist_actions = self.action_distribution(observations)
         sampled_actions = dist_actions.sample()
+        sampled_actions = sampled_actions.detach().numpy()
 
         #######################################################
         #########          END YOUR CODE.          ############
@@ -67,7 +67,7 @@ class CategoricalPolicy(BasePolicy, nn.Module):
         #########   YOUR CODE HERE - 1-2 lines.    ############
         
         logits = self.network(observations)
-        distribution = ptd.Categorical(logits=logits)
+        distribution = torch.distributions.Categorical(logits=logits)
 
         #######################################################
         #########          END YOUR CODE.          ############
@@ -131,7 +131,7 @@ class GaussianPolicy(BasePolicy, nn.Module):
         
         means = self.network(observations)
         stds = self.std()
-        distribution = ptd.MultivariateNormal(loc=means.to(device), scale_tril=torch.diag(stds).to(device))
+        distribution = torch.distributions.MultivariateNormal(loc=means.to(device), scale_tril=torch.diag(stds).to(device))
         
         #######################################################
         #########          END YOUR CODE.          ############

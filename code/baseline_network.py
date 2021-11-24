@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 from network_utils import build_mlp, device, np2torch
 
-
 class BaselineNetwork(nn.Module):
     """
     Class for implementing Baseline network
@@ -24,7 +23,7 @@ class BaselineNetwork(nn.Module):
 
         #######################################################
         #########   YOUR CODE HERE - 2-8 lines.   #############
-        
+
         self.observation_dim = self.env.observation_space.shape[0]
         self.action_dim = 1
 
@@ -110,13 +109,14 @@ class BaselineNetwork(nn.Module):
         observations = np2torch(observations)
         #######################################################
         #########   YOUR CODE HERE - 4-10 lines.  #############
+        from general import batch_iterator
 
         mse = torch.nn.MSELoss()
 
-        for _ in range(5):
+        for obs, ret in batch_iterator(observations, returns):
             self.optimizer.zero_grad()
-            mse_loss = mse(self(observations).squeeze(), returns)
-            mse_loss.backward()
+            loss = mse(self(obs).squeeze(), ret)
+            loss.backward()
             self.optimizer.step()
         
         #######################################################

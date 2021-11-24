@@ -27,13 +27,13 @@ def build_mlp(
     #######################################################
     #########   YOUR CODE HERE - 7-15 lines.   ############
 
-    modules = []
-    for _ in range(n_layers):
-        modules.append(nn.Linear(input_size, size))
-        modules.append(nn.ReLU())
+    layer = []
+    for i in range(n_layers):
+        layer.append(nn.Linear(input_size, size))
+        layer.append(nn.ReLU())
         input_size = size
-    modules.append(nn.Linear(size, output_size))
-    sequential = nn.Sequential(*modules)
+    layer.append(nn.Linear(size, output_size))
+    sequential = nn.Sequential(*layer)
     return sequential
 
     #######################################################
